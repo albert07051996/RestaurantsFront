@@ -6,6 +6,8 @@ import { store } from './store/store';
 import RestaurantMenu from './components/RestaurantMenu';
 import { BrowserRouter, Routes, Route } from "react-router"; // დავამატეთ Routes და Route
 import MenuList from './components/MenuList';
+import AddCategoryForm from './components/AddCategoryForm';
+import AddDishForm from './components/AddDishForm';
 import './App.css';
 
 const App: React.FC = () => {
@@ -29,6 +31,13 @@ const App: React.FC = () => {
 
             {/* მენიუს გვერდი */}
             <Route path="/menu" element={<MenuList />} />
+
+            {/* კატეგორიის დამატება */}
+            <Route path="/add-category" element={<AddCategoryForm />} />
+
+            {/* კერძის დამატება */}
+            <Route path="/add-dish" element={<AddDishForm />} />
+
 
             {/* დინამიური როუტი - მაგალითად კონკრეტული კერძისთვის */}
             {/* <Route path="/menu/:id" element={<DishDetail />} /> */}

@@ -1,0 +1,256 @@
+.tracking-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+  font-family: 'Playfair Display', serif;
+  color: #f5f5f5;
+  padding: 2rem;
+}
+
+.tracking-header {
+  text-align: center;
+  padding: 2rem 0 3rem;
+}
+
+.tracking-header h1 {
+  font-size: 2.5rem;
+  color: #d4af37;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.tracking-header p {
+  color: #c19a6b;
+  font-size: 1.1rem;
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 0.15em;
+}
+
+.tracking-search {
+  max-width: 500px;
+  margin: 0 auto 3rem;
+  display: flex;
+  gap: 0.8rem;
+}
+
+.tracking-search input {
+  flex: 1;
+  padding: 0.9rem 1.2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  color: #f5f5f5;
+  font-size: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.tracking-search input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.tracking-search button {
+  padding: 0.9rem 2rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #d4af37, #c19a6b);
+  color: #1a1a1a;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Cormorant Garamond', serif;
+  transition: all 0.3s ease;
+}
+
+.tracking-search button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+}
+
+.tracking-card {
+  max-width: 600px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #2d1810, #1a1a1a);
+  border: 2px solid #d4af37;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+}
+
+.tracking-card h2 {
+  color: #d4af37;
+  font-size: 1.8rem;
+  margin: 0 0 2rem 0;
+  text-align: center;
+}
+
+/* Timeline */
+.tracking-timeline {
+  position: relative;
+  padding-left: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.tracking-timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.timeline-step {
+  position: relative;
+  padding: 0.8rem 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.timeline-step.completed .timeline-dot {
+  background: #52c41a;
+  border-color: #52c41a;
+}
+
+.timeline-step.current .timeline-dot {
+  background: #d4af37;
+  border-color: #d4af37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+.timeline-step.pending .timeline-dot {
+  background: #1a1a1a;
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.timeline-step.completed .timeline-label {
+  color: #52c41a;
+}
+
+.timeline-step.current .timeline-label {
+  color: #d4af37;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.timeline-step.pending .timeline-label {
+  color: #666;
+}
+
+/* Order Details */
+.tracking-details {
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  padding-top: 1.5rem;
+}
+
+.tracking-details h3 {
+  color: #d4af37;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.tracking-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tracking-item-name {
+  color: #f5f5f5;
+}
+
+.tracking-item-price {
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.tracking-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #d4af37;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d4af37;
+}
+
+.tracking-meta {
+  margin-top: 1.5rem;
+  color: #888;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.tracking-error {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  color: #e74c3c;
+  font-size: 1.1rem;
+  font-family: 'Cormorant Garamond', serif;
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.tracking-loading {
+  text-align: center;
+  color: #d4af37;
+  font-size: 1.3rem;
+  padding: 3rem 0;
+}
+
+.tracking-home-link {
+  display: block;
+  text-align: center;
+  margin-top: 2rem;
+  color: #d4af37;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.tracking-home-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .tracking-container {
+    padding: 1rem;
+  }
+
+  .tracking-header h1 {
+    font-size: 2rem;
+  }
+
+  .tracking-search {
+    flex-direction: column;
+  }
+
+  .tracking-card {
+    padding: 1.5rem;
+  }
+}

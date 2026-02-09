@@ -1,0 +1,304 @@
+/* CheckoutModal.css */
+.checkout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.checkout-modal {
+  background: linear-gradient(135deg, #2d1810, #1a1a1a);
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 2px solid #d4af37;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
+  padding: 2.5rem;
+  position: relative;
+  font-family: 'Playfair Display', serif;
+  color: #f5f5f5;
+}
+
+.checkout-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.checkout-close-btn:hover {
+  background: #e74c3c;
+  transform: scale(1.1);
+}
+
+.checkout-title {
+  font-size: 2rem;
+  color: #d4af37;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+.checkout-section {
+  margin-bottom: 1.5rem;
+}
+
+.checkout-label {
+  display: block;
+  color: #d4af37;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+}
+
+.checkout-input {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  color: #f5f5f5;
+  font-size: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.checkout-input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.checkout-input.input-error {
+  border-color: #e74c3c;
+}
+
+.checkout-textarea {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  color: #f5f5f5;
+  font-size: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.checkout-textarea:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Order Type Buttons */
+.order-type-buttons {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.order-type-btn {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border-radius: 30px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(0, 0, 0, 0.4);
+  color: #c19a6b;
+  font-size: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.order-type-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: #d4af37;
+}
+
+.order-type-btn.active {
+  background: linear-gradient(135deg, #d4af37, #c19a6b);
+  color: #1a1a1a;
+  border-color: #d4af37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Order Summary */
+.checkout-summary {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.checkout-summary h3 {
+  color: #d4af37;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.summary-items {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.summary-item-name {
+  color: #f5f5f5;
+  font-size: 1rem;
+}
+
+.summary-item-price {
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 2px solid #d4af37;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d4af37;
+}
+
+/* Submit Button */
+.checkout-submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #d4af37, #c19a6b);
+  color: #1a1a1a;
+  border: none;
+  padding: 1.2rem;
+  border-radius: 30px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 0.05em;
+}
+
+.checkout-submit-btn:hover:not(:disabled) {
+  transform: scale(1.03);
+  box-shadow: 0 5px 25px rgba(212, 175, 55, 0.5);
+}
+
+.checkout-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success State */
+.checkout-success {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #52c41a, #73d13d);
+  color: white;
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 0 30px rgba(82, 196, 26, 0.4);
+}
+
+.checkout-success h2 {
+  color: #d4af37;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.checkout-success p {
+  color: #c19a6b;
+  font-size: 1.2rem;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* QR Mode Badge */
+.qr-mode-badge {
+  background: linear-gradient(135deg, #d4af37, #c19a6b);
+  color: #1a1a1a;
+  padding: 0.8rem 1.5rem;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .checkout-overlay {
+    padding: 1rem;
+  }
+
+  .checkout-modal {
+    padding: 1.5rem;
+    max-height: 95vh;
+  }
+
+  .checkout-title {
+    font-size: 1.5rem;
+  }
+
+  .order-type-buttons {
+    flex-direction: column;
+  }
+
+  .order-type-btn {
+    border-radius: 10px;
+  }
+}

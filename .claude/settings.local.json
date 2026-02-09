@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:localhost)",
+      "Bash(dir:*)",
+      "Bash(npx tsc:*)",
+      "Bash(dotnet add package:*)",
+      "Bash(dotnet build:*)",
+      "Bash(tree:*)",
+      "Bash(npx vite build)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet tool install:*)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell:*)",
+      "Bash(powershell.exe -NoProfile -Command \"Get-CimInstance Win32_Process | Where-Object {$_Name -eq ''dotnet.exe''} | Select-Object ProcessId, CommandLine | Format-List\")",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\unami\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-unami-Desktop-RestaurantsFront\\\\9268841a-c2b7-498f-a8da-0c3b30948d00\\\\scratchpad\\\\check_dotnet.ps1\")",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\unami\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-unami-Desktop-RestaurantsFront\\\\9268841a-c2b7-498f-a8da-0c3b30948d00\\\\scratchpad\\\\check_procs.ps1\")",
+      "Bash(dotnet ef database update:*)"
+    ]
+  }
+}

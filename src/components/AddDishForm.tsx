@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { API_BASE_URL, apiClient } from '../config/api';
 import './AddDishForm.css';
 
 interface DishFormData {
@@ -58,12 +59,10 @@ const AddDishForm: React.FC<AddDishFormProps> = ({ onSuccess, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const API_BASE = 'https://localhost:61015/api';
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${API_BASE}/DishCategory`);
+        const response = await fetch(`${API_BASE_URL}/DishCategory`);
         if (response.ok) {
           const data = await response.json();
           setCategories(data);
@@ -130,12 +129,11 @@ const AddDishForm: React.FC<AddDishFormProps> = ({ onSuccess, onClose }) => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/Dish`, {
-        method: 'POST',
-        body: submitData,
+      const response = await apiClient.post('/Dish', submitData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (response.ok) {
+      if (response.status === 201 || response.status === 200) {
         alert('კერძი წარმატებით დაემატა!');
         setFormData({
           NameKa: '',
@@ -163,7 +161,7 @@ const AddDishForm: React.FC<AddDishFormProps> = ({ onSuccess, onClose }) => {
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('შეცდომა სერვერთან კავშირისას');
+      alert('შეცდომა კერძის დამატებისას. გთხოვთ შეამოწმოთ ავტორიზაცია.');
     }
 
     setIsSubmitting(false);

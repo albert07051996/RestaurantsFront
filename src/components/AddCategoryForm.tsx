@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { apiClient } from '../config/api';
 import './AddCategoryForm.css';
 
 interface CategoryFormData {
@@ -29,7 +30,6 @@ const AddCategoryForm: React.FC<AddCategoryFormProps> = ({ onSuccess, onClose })
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const API_BASE = 'https://localhost:61015/api';
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -71,12 +71,11 @@ const AddCategoryForm: React.FC<AddCategoryFormProps> = ({ onSuccess, onClose })
     }
 
     try {
-      const response = await fetch(`${API_BASE}/DishCategory`, {
-        method: 'POST',
-        body: submitData,
+      const response = await apiClient.post('/DishCategory', submitData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (response.ok) {
+      if (response.status === 201 || response.status === 200) {
         alert('კატეგორია წარმატებით დაემატა!');
         setFormData({
           NameKa: '',
@@ -93,7 +92,7 @@ const AddCategoryForm: React.FC<AddCategoryFormProps> = ({ onSuccess, onClose })
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('შეცდომა სერვერთან კავშირისას');
+      alert('შეცდომა კატეგორიის დამატებისას. გთხოვთ შეამოწმოთ ავტორიზაცია.');
     }
 
     setIsSubmitting(false);

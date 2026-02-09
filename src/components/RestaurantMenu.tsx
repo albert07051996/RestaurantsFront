@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router';
+import { API_BASE_URL, apiClient } from '../config/api';
+import CheckoutModal from './orders/CheckoutModal';
+import type { TableSessionResponse } from '../types/session';
 import './RestaurantMenu.css';
 
 interface MenuItem {
@@ -36,21 +40,110 @@ interface DishCategory {
 }
 
 const RestaurantMenu: React.FC = () => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [searchParams] = useSearchParams();
+  const qrTable = useMemo(() => {
+    const t = searchParams.get('table');
+    if (t && /^\d+$/.test(t) && parseInt(t) >= 1) return parseInt(t);
+    // Also check localStorage for previously scanned table
+    const stored = localStorage.getItem('tableSessionTable');
+    if (stored && /^\d+$/.test(stored)) return parseInt(stored);
+    return null;
+  }, [searchParams]);
+
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem('cart');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [selectedDish, setSelectedDish] = useState<MenuItem | CartItem | null>(null);
   const [comment, setComment] = useState('');
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<DishCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [modalQuantity, setModalQuantity] = useState(1);
+  const [activeSession, setActiveSession] = useState<TableSessionResponse | null>(null);
+  const [showSessionOrders, setShowSessionOrders] = useState(!!qrTable);
 
-  const API_BASE = 'https://localhost:61015/api';
+  // Handle table change from URL — clear old session if table changed
+  useEffect(() => {
+    const urlTable = searchParams.get('table');
+    if (urlTable && /^\d+$/.test(urlTable) && parseInt(urlTable) >= 1) {
+      const storedTable = localStorage.getItem('tableSessionTable');
+      // If table number changed, clear old session data
+      if (storedTable && storedTable !== urlTable) {
+        localStorage.removeItem('tableSessionId');
+        localStorage.removeItem('tableSessionCustomer');
+        localStorage.removeItem('tableSessionPhone');
+        setActiveSession(null);
+      }
+      localStorage.setItem('tableSessionTable', urlTable);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const loadSession = useCallback(async () => {
+    // First try by stored session ID — but only if it matches current table
+    const sessionId = localStorage.getItem('tableSessionId');
+    if (sessionId) {
+      try {
+        const res = await apiClient.get<TableSessionResponse>(`/TableSession/${sessionId}`);
+        if (res.data.status === 'Closed') {
+          localStorage.removeItem('tableSessionId');
+          localStorage.removeItem('tableSessionCustomer');
+          localStorage.removeItem('tableSessionPhone');
+          localStorage.removeItem('tableSessionTable');
+          setActiveSession(null);
+          return;
+        }
+        // Verify session matches current table (if QR mode)
+        if (qrTable && res.data.tableNumber !== qrTable) {
+          // Session is for different table — clear and search for correct one
+          localStorage.removeItem('tableSessionId');
+          localStorage.removeItem('tableSessionCustomer');
+          localStorage.removeItem('tableSessionPhone');
+        } else {
+          setActiveSession(res.data);
+          return;
+        }
+      } catch {
+        localStorage.removeItem('tableSessionId');
+      }
+    }
+
+    // Try to find active session by table number (QR scan case)
+    if (qrTable) {
+      try {
+        const res = await apiClient.get<TableSessionResponse>(`/TableSession/table/${qrTable}/active`);
+        // Found active session for this table — link it
+        localStorage.setItem('tableSessionId', res.data.id);
+        localStorage.setItem('tableSessionCustomer', res.data.customerName);
+        localStorage.setItem('tableSessionPhone', res.data.customerPhone);
+        localStorage.setItem('tableSessionTable', String(res.data.tableNumber));
+        setActiveSession(res.data);
+        return;
+      } catch {
+        // No active session for this table yet — that's ok
+      }
+    }
+
+    setActiveSession(null);
+  }, [qrTable]);
+
+  useEffect(() => {
+    loadSession();
+    const interval = setInterval(loadSession, 15000);
+    return () => clearInterval(interval);
+  }, [loadSession]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [dishesRes, categoriesRes] = await Promise.all([
-          fetch(`${API_BASE}/Dish`),
-          fetch(`${API_BASE}/DishCategory`)
+          fetch(`${API_BASE_URL}/Dish`),
+          fetch(`${API_BASE_URL}/DishCategory`)
         ]);
 
         if (dishesRes.ok) {
@@ -72,30 +165,17 @@ const RestaurantMenu: React.FC = () => {
     fetchData();
   }, []);
 
-  const getCategoryName = (categoryId: string): string => {
-    const category = categories.find(c => c.id === categoryId);
-    return category ? `${category.nameKa} • ${category.nameEn}` : 'სხვა';
-  };
-
-  const addToCart = (item: MenuItem, itemComment: string = '') => {
+  const addToCart = (item: MenuItem, itemComment: string = '', qty: number = 1) => {
     const existingItem = cart.find(cartItem => cartItem.id === item.id && cartItem.cartComment === itemComment);
     if (existingItem) {
       setCart(cart.map(cartItem =>
         cartItem.id === item.id && cartItem.cartComment === itemComment
-          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          ? { ...cartItem, quantity: cartItem.quantity + qty }
           : cartItem
       ));
     } else {
-      setCart([...cart, { ...item, quantity: 1, cartComment: itemComment }]);
+      setCart([...cart, { ...item, quantity: qty, cartComment: itemComment }]);
     }
-  };
-
-  const updateCartItem = (item: CartItem, newComment: string) => {
-    setCart(cart.map(cartItem =>
-      cartItem.id === item.id && cartItem.cartComment === item.cartComment
-        ? { ...cartItem, cartComment: newComment }
-        : cartItem
-    ));
   };
 
   const removeFromCart = (itemId: string, itemComment: string) => {
@@ -121,18 +201,25 @@ const RestaurantMenu: React.FC = () => {
   const handleDishClick = (dish: MenuItem | CartItem) => {
     setSelectedDish(dish);
     setComment('cartComment' in dish ? dish.cartComment : '');
+    setModalQuantity('cartComment' in dish ? dish.quantity : 1);
   };
 
   const handleModalClose = () => {
     setSelectedDish(null);
     setComment('');
+    setModalQuantity(1);
   };
 
   const handleAddOrUpdate = () => {
     if (selectedDish && 'cartComment' in selectedDish) {
-      updateCartItem(selectedDish, comment);
+      // Update existing cart item: comment + quantity
+      setCart(cart.map(cartItem =>
+        cartItem.id === selectedDish.id && cartItem.cartComment === selectedDish.cartComment
+          ? { ...cartItem, cartComment: comment, quantity: modalQuantity }
+          : cartItem
+      ));
     } else if (selectedDish) {
-      addToCart(selectedDish, comment);
+      addToCart(selectedDish, comment, modalQuantity);
     }
     handleModalClose();
   };
@@ -155,6 +242,11 @@ const RestaurantMenu: React.FC = () => {
       <header className="header">
         <h1>სუფრა</h1>
         <p>GEORGIAN CULINARY EXPERIENCE</p>
+        {qrTable && (
+          <div className="qr-table-indicator">
+            მაგიდა #{qrTable}
+          </div>
+        )}
         <nav className="header-nav">
           {categories.map((category) => (
             <button
@@ -165,8 +257,144 @@ const RestaurantMenu: React.FC = () => {
               {category.nameKa}
             </button>
           ))}
+          <a
+            href="/reserve"
+            className="header-nav-button"
+            style={{ textDecoration: 'none', color: '#d4af37', border: '1px solid #d4af37' }}
+          >
+            მაგიდის დაჯავშნა
+          </a>
         </nav>
       </header>
+
+      {/* Table Orders Section — always visible in QR mode */}
+      {qrTable && (
+        <div className="table-orders-section">
+          <div className="table-orders-header">
+            <div className="table-orders-title">
+              <span className="table-orders-badge">მაგიდა #{qrTable}</span>
+              {activeSession && (
+                <>
+                  <span className="table-orders-count">{activeSession.orders.length} შეკვეთა</span>
+                  <span className="table-orders-total">&#8382;{activeSession.totalAmount.toFixed(2)}</span>
+                </>
+              )}
+            </div>
+            {activeSession && activeSession.orders.length > 0 && (
+              <button
+                className="table-orders-toggle"
+                onClick={() => setShowSessionOrders(!showSessionOrders)}
+              >
+                {showSessionOrders ? 'შეკვეთების დამალვა' : 'შეკვეთების ჩვენება'}
+              </button>
+            )}
+          </div>
+
+          {(!activeSession || activeSession.orders.length === 0) && (
+            <div className="table-orders-empty">
+              შეკვეთები ჯერ არ გაკეთებულა
+            </div>
+          )}
+
+          {activeSession && activeSession.orders.length > 0 && showSessionOrders && (
+            <div className="table-orders-list">
+              {activeSession.orders.map((order) => {
+                const statusSteps = ['Pending', 'Confirmed', 'Preparing', 'Ready', 'Delivered'];
+                const statusLabelsMap: Record<string, string> = {
+                  Pending: 'მოლოდინში',
+                  Confirmed: 'დადასტურებულია',
+                  Preparing: 'მზადდება',
+                  Ready: 'მზადაა',
+                  Delivered: 'მიტანილია',
+                };
+                const isCancelled = order.status === 'Cancelled';
+                const currentStepIndex = statusSteps.indexOf(order.status);
+
+                return (
+                  <div key={order.id} className="table-order-card">
+                    <div className="table-order-top">
+                      <span className="table-order-number">#{order.orderNumber}</span>
+                      <span className="table-order-time">
+                        {new Date(order.createdAt).toLocaleTimeString('ka-GE', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+
+                    {/* Status Progress */}
+                    {isCancelled ? (
+                      <div className="table-order-cancelled">გაუქმებულია</div>
+                    ) : (
+                      <div className="table-order-progress">
+                        {statusSteps.map((step, idx) => {
+                          const isDone = idx < currentStepIndex;
+                          const isCurrent = idx === currentStepIndex;
+                          return (
+                            <div key={step} className="progress-step-wrapper">
+                              <div className={`progress-step ${isDone ? 'done' : ''} ${isCurrent ? 'current' : ''}`}>
+                                {isDone ? '\u2713' : idx + 1}
+                              </div>
+                              <span className={`progress-label ${isCurrent ? 'current' : ''} ${isDone ? 'done' : ''}`}>
+                                {statusLabelsMap[step]}
+                              </span>
+                              {idx < statusSteps.length - 1 && (
+                                <div className={`progress-line ${isDone ? 'done' : ''}`} />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Items */}
+                    <div className="table-order-items">
+                      {order.items.map((item) => (
+                        <div key={item.id} className="table-order-item-row">
+                          <span className="table-order-item-name">{item.dishNameKa}</span>
+                          <span className="table-order-item-qty">x{item.quantity}</span>
+                          <span className="table-order-item-price">&#8382;{item.totalPrice.toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="table-order-subtotal">
+                      <span>ჯამი:</span>
+                      <span>&#8382;{order.totalAmount.toFixed(2)}</span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              <div className="table-orders-grand-total">
+                <span>სულ ჯამი:</span>
+                <span>&#8382;{activeSession.totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Active Session Banner — non-QR mode (manual DineIn) */}
+      {!qrTable && activeSession && (
+        <div className="session-banner">
+          <div className="session-banner-info">
+            <span className="session-badge">
+              მაგიდა #{activeSession.tableNumber}
+            </span>
+            <span className="session-customer">{activeSession.customerName}</span>
+            <span className="session-orders-count">
+              {activeSession.orders.length} შეკვეთა
+            </span>
+            <span className="session-total">
+              &#8382;{activeSession.totalAmount.toFixed(2)}
+            </span>
+          </div>
+          <button
+            className="session-view-btn"
+            onClick={() => setShowSessionOrders(!showSessionOrders)}
+          >
+            {showSessionOrders ? 'დამალვა' : 'ჩემი შეკვეთები'}
+          </button>
+        </div>
+      )}
 
       <div className="grid-container">
 
@@ -346,6 +574,7 @@ const RestaurantMenu: React.FC = () => {
 
                 <button
                   className="checkout-button"
+                  onClick={() => setShowCheckout(true)}
                   onMouseEnter={(e) => {
                     (e.target as HTMLElement).style.transform = 'scale(1.05)';
                     (e.target as HTMLElement).style.boxShadow = '0 10px 30px rgba(212, 175, 55, 0.5)';
@@ -445,20 +674,58 @@ const RestaurantMenu: React.FC = () => {
                 />
               </div>
 
+              {/* Quantity Selector */}
+              <div className="modal-quantity-section">
+                <h3 style={{ color: '#d4af37', marginBottom: '1rem' }}>რაოდენობა:</h3>
+                <div className="modal-quantity-controls">
+                  <button
+                    className="modal-qty-btn"
+                    onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))}
+                  >-</button>
+                  <input
+                    type="number"
+                    className="modal-qty-input"
+                    value={modalQuantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val >= 1) setModalQuantity(val);
+                    }}
+                    min="1"
+                  />
+                  <button
+                    className="modal-qty-btn"
+                    onClick={() => setModalQuantity(modalQuantity + 1)}
+                  >+</button>
+                </div>
+              </div>
+
               <div className="modal-footer">
-                <span className="modal-price">₾{selectedDish.price}</span>
+                <span className="modal-price">₾{(selectedDish.price * modalQuantity).toFixed(2)}</span>
 
                 <button
                   onClick={handleAddOrUpdate}
                   className="modal-add-button"
                 >
-                  {'cartComment' in selectedDish ? 'ცვლილების შეტანა' : '➕ დამატება შეკვეთაში'}
+                  {'cartComment' in selectedDish ? 'ცვლილების შეტანა' : `➕ დამატება (${modalQuantity})`}
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Checkout Modal */}
+      <CheckoutModal
+        visible={showCheckout}
+        cart={cart}
+        qrTableNumber={qrTable}
+        onClose={() => setShowCheckout(false)}
+        onSuccess={() => {
+          setCart([]);
+          localStorage.removeItem('cart');
+          loadSession();
+        }}
+      />
 
       {/* Google Fonts */}
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet" />

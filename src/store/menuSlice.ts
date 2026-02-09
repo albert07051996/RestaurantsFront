@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { MenuItem, FoodCategory } from '../types/menu';
-import axios from 'axios';
+import { apiClient } from '../config/api';
 
 interface MenuState {
   items: MenuItem[];
@@ -20,21 +20,11 @@ const initialState: MenuState = {
   selectedLanguage: 'ka',
 };
 
-// Mock API - შეცვალე რეალური API endpoint-ებით
-const API_BASE_URL = 'https://localhost:51263/api';
-
 // Async thunks
 export const fetchMenuItems = createAsyncThunk(
   'menu/fetchItems',
   async () => {
-    const response = await axios.get<MenuItem[]>( `${API_BASE_URL}/Menu/getAllMenuItems`,{
-        headers: {
-          // ეს ხაზი გამოტოვებს ngrok-ის გაფრთხილების გვერდს
-          // 'ngrok-skip-browser-warning': '69420', 
-          // ან გამოიყენე ნებისმიერი მნიშვნელობა:
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
+    const response = await apiClient.get<MenuItem[]>('/Menu/getAllMenuItems');
     return response.data;
   }
 );
@@ -42,7 +32,7 @@ export const fetchMenuItems = createAsyncThunk(
 export const fetchCategories = createAsyncThunk(
   'menu/fetchCategories',
   async () => {
-    const response = await axios.get<FoodCategory[]>(`${API_BASE_URL}/categories`);
+    const response = await apiClient.get<FoodCategory[]>('/categories');
     return response.data;
   }
 );
@@ -50,7 +40,7 @@ export const fetchCategories = createAsyncThunk(
 export const addMenuItem = createAsyncThunk(
   'menu/addItem',
   async (item: Omit<MenuItem, 'id'>) => {
-    const response = await axios.post<MenuItem>(`${API_BASE_URL}/menu`, item);
+    const response = await apiClient.post<MenuItem>('/menu', item);
     return response.data;
   }
 );
@@ -58,7 +48,7 @@ export const addMenuItem = createAsyncThunk(
 export const updateMenuItem = createAsyncThunk(
   'menu/updateItem',
   async (item: MenuItem) => {
-    const response = await axios.put<MenuItem>(`${API_BASE_URL}/menu/${item.id}`, item);
+    const response = await apiClient.put<MenuItem>(`/menu/${item.id}`, item);
     return response.data;
   }
 );
@@ -66,7 +56,7 @@ export const updateMenuItem = createAsyncThunk(
 export const deleteMenuItem = createAsyncThunk(
   'menu/deleteItem',
   async (id: string) => {
-    await axios.delete(`${API_BASE_URL}/menu/${id}`);
+    await apiClient.delete(`/menu/${id}`);
     return id;
   }
 );

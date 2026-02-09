@@ -1,0 +1,435 @@
+.reservation-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+  font-family: 'Playfair Display', serif;
+  color: #f5f5f5;
+}
+
+.reservation-header {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7));
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 3px solid #d4af37;
+}
+
+.reservation-header h1 {
+  font-size: 3rem;
+  margin: 0;
+  color: #d4af37;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  letter-spacing: 0.1em;
+}
+
+.reservation-header p {
+  font-size: 1.1rem;
+  margin: 0.3rem 0 0;
+  color: #c19a6b;
+  letter-spacing: 0.2em;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.reservation-header-nav {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.reservation-header-link {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  color: #d4af37;
+  border-radius: 25px;
+  text-decoration: none;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.reservation-header-link:hover {
+  background: rgba(212, 175, 55, 0.3);
+  transform: scale(1.05);
+}
+
+.reservation-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Form Section */
+.reservation-form-section {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(45, 24, 16, 0.6));
+  border-radius: 15px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.reservation-form-section h2 {
+  color: #d4af37;
+  font-size: 1.8rem;
+  margin: 0 0 1.5rem;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.reservation-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.reservation-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.reservation-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.reservation-form-group label {
+  color: #c19a6b;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.reservation-form-group input,
+.reservation-form-group textarea,
+.reservation-form-group select {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  color: #f5f5f5;
+  font-size: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  transition: border-color 0.3s ease;
+}
+
+.reservation-form-group input:focus,
+.reservation-form-group textarea:focus,
+.reservation-form-group select:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.reservation-form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.reservation-form-group input::placeholder,
+.reservation-form-group textarea::placeholder {
+  color: #666;
+}
+
+.form-error {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Pre-order Menu Section */
+.preorder-section {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(45, 24, 16, 0.6));
+  border-radius: 15px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.preorder-section h2 {
+  color: #d4af37;
+  font-size: 1.8rem;
+  margin: 0 0 0.3rem;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.preorder-subtitle {
+  color: #888;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.preorder-category-title {
+  color: #c19a6b;
+  font-size: 1.3rem;
+  margin: 1.5rem 0 0.8rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(193, 154, 107, 0.3);
+}
+
+.preorder-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.preorder-item-card {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.preorder-item-card:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  transform: translateY(-2px);
+}
+
+.preorder-item-card.selected {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.preorder-item-name {
+  color: #f5f5f5;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.preorder-item-name-en {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.preorder-item-price {
+  color: #d4af37;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.preorder-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.preorder-qty-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.preorder-qty-btn:hover {
+  background: rgba(212, 175, 55, 0.3);
+}
+
+.preorder-qty-display {
+  min-width: 30px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #f5f5f5;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+}
+
+/* Cart Summary */
+.preorder-cart-summary {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-top: 1.5rem;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.preorder-cart-summary h3 {
+  color: #d4af37;
+  margin: 0 0 0.8rem;
+  font-size: 1.2rem;
+}
+
+.preorder-cart-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: #d0d0d0;
+}
+
+.preorder-cart-item span:last-child {
+  color: #d4af37;
+}
+
+.preorder-cart-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.8rem;
+  margin-top: 0.5rem;
+  border-top: 2px solid #d4af37;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #d4af37;
+}
+
+/* Submit Button */
+.reservation-submit-btn {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(135deg, #d4af37, #c19a6b);
+  color: #1a1a1a;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.reservation-submit-btn:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 5px 25px rgba(212, 175, 55, 0.5);
+}
+
+.reservation-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success Section */
+.reservation-success {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(45, 24, 16, 0.6));
+  border-radius: 15px;
+  border: 2px solid #d4af37;
+  padding: 3rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.reservation-success h2 {
+  color: #d4af37;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.reservation-success .res-number {
+  color: #f5f5f5;
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: rgba(212, 175, 55, 0.15);
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  display: inline-block;
+  margin: 1rem 0;
+  letter-spacing: 0.05em;
+}
+
+.reservation-success p {
+  color: #c19a6b;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.reservation-success-details {
+  margin-top: 1.5rem;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 1.2rem;
+}
+
+.reservation-success-details .detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.reservation-success-details .detail-row .label {
+  color: #888;
+}
+
+.reservation-success-details .detail-row .value {
+  color: #f5f5f5;
+  font-weight: 600;
+}
+
+.reservation-new-btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  background: transparent;
+  color: #d4af37;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reservation-new-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+}
+
+/* Error display */
+.reservation-error {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #e74c3c;
+  font-family: 'Cormorant Garamond', serif;
+  text-align: center;
+}
+
+/* Loading */
+.reservation-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #d4af37;
+  font-size: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reservation-header h1 {
+    font-size: 2rem;
+  }
+
+  .reservation-body {
+    padding: 1rem;
+  }
+
+  .reservation-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preorder-items-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reservation-form-section,
+  .preorder-section {
+    padding: 1.2rem;
+  }
+}

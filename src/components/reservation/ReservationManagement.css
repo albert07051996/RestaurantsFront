@@ -1,7 +1,7 @@
 .rm-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, serif;
   color: #f5f5f5;
 }
 

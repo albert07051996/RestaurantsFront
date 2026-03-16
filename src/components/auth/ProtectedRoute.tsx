@@ -19,7 +19,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%)',
       }}>
-        <p style={{ color: '#d4af37', fontSize: '1.5rem', fontFamily: "'Playfair Display', serif" }}>
+        <p style={{ color: '#d4af37', fontSize: '1.5rem', fontFamily: "Georgia, serif" }}>
           იტვირთება...
         </p>
       </div>

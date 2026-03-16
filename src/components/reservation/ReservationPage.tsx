@@ -11,8 +11,17 @@ interface MenuItem {
   nameKa: string;
   nameEn: string;
   descriptionKa: string;
+  descriptionEn: string;
   price: number;
   dishCategoryId: string;
+  preparationTimeMinutes: number;
+  calories: number;
+  spicyLevel: number;
+  ingredients: string;
+  ingredientsEn: string;
+  volume: string;
+  alcoholContent: string;
+  isVeganDish: boolean;
   imageUrl: string;
 }
 
@@ -25,6 +34,7 @@ interface DishCategory {
 interface PreOrderItem {
   dish: MenuItem;
   quantity: number;
+  comment: string;
 }
 
 const ReservationPage: React.FC = () => {
@@ -45,6 +55,10 @@ const ReservationPage: React.FC = () => {
   const [menuLoading, setMenuLoading] = useState(true);
   const [preOrderItems, setPreOrderItems] = useState<PreOrderItem[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [selectedDish, setSelectedDish] = useState<MenuItem | null>(null);
+  const [editingItemIndex, setEditingItemIndex] = useState<number | null>(null);
+  const [modalComment, setModalComment] = useState('');
+  const [modalQuantity, setModalQuantity] = useState(1);
 
   useEffect(() => {
     dispatch(clearReservationError());
@@ -79,21 +93,50 @@ const ReservationPage: React.FC = () => {
     [menuItems]
   );
 
-  const getPreOrderQty = (dishId: string): number => {
-    return preOrderItems.find(p => p.dish.id === dishId)?.quantity || 0;
+  const getTotalQtyForDish = (dishId: string): number => {
+    return preOrderItems
+      .filter(p => p.dish.id === dishId)
+      .reduce((sum, p) => sum + p.quantity, 0);
   };
 
-  const updatePreOrder = (dish: MenuItem, delta: number) => {
-    setPreOrderItems(prev => {
-      const existing = prev.find(p => p.dish.id === dish.id);
-      if (existing) {
-        const newQty = existing.quantity + delta;
-        if (newQty <= 0) return prev.filter(p => p.dish.id !== dish.id);
-        return prev.map(p => p.dish.id === dish.id ? { ...p, quantity: newQty } : p);
-      }
-      if (delta > 0) return [...prev, { dish, quantity: delta }];
-      return prev;
-    });
+  const handleDishClick = (dish: MenuItem) => {
+    setSelectedDish(dish);
+    setEditingItemIndex(null);
+    setModalComment('');
+    setModalQuantity(1);
+  };
+
+  const handleEditItem = (index: number) => {
+    const item = preOrderItems[index];
+    setSelectedDish(item.dish);
+    setEditingItemIndex(index);
+    setModalComment(item.comment);
+    setModalQuantity(item.quantity);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    setPreOrderItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleModalClose = () => {
+    setSelectedDish(null);
+    setEditingItemIndex(null);
+    setModalComment('');
+    setModalQuantity(1);
+  };
+
+  const handleModalAdd = () => {
+    if (!selectedDish) return;
+    if (editingItemIndex !== null) {
+      setPreOrderItems(prev => prev.map((p, i) =>
+        i === editingItemIndex
+          ? { ...p, quantity: modalQuantity, comment: modalComment }
+          : p
+      ));
+    } else {
+      setPreOrderItems(prev => [...prev, { dish: selectedDish, quantity: modalQuantity, comment: modalComment }]);
+    }
+    handleModalClose();
   };
 
   const preOrderTotal = useMemo(() =>
@@ -331,29 +374,52 @@ const ReservationPage: React.FC = () => {
                   return (
                     <div key={categoryId}>
                       <h3 className="preorder-category-title">
-                        {category ? `${category.nameKa} / ${category.nameEn}` : 'სხვა'}
+                        {category ? `${category.nameKa} • ${category.nameEn}` : 'სხვა'}
                       </h3>
-                      <div className="preorder-items-grid">
+                      <div className="preorder-items-list">
                         {items.map(dish => {
-                          const qty = getPreOrderQty(dish.id);
+                          const totalQty = getTotalQtyForDish(dish.id);
                           return (
-                            <div key={dish.id} className={`preorder-item-card ${qty > 0 ? 'selected' : ''}`}>
-                              <div className="preorder-item-name">{dish.nameKa}</div>
-                              <div className="preorder-item-name-en">{dish.nameEn}</div>
-                              <div className="preorder-item-price">&#8382;{dish.price}</div>
-                              <div className="preorder-item-controls">
-                                <button
-                                  type="button"
-                                  className="preorder-qty-btn"
-                                  onClick={() => updatePreOrder(dish, -1)}
-                                  disabled={qty === 0}
-                                >-</button>
-                                <span className="preorder-qty-display">{qty}</span>
-                                <button
-                                  type="button"
-                                  className="preorder-qty-btn"
-                                  onClick={() => updatePreOrder(dish, 1)}
-                                >+</button>
+                            <div
+                              key={dish.id}
+                              className={`preorder-dish-card ${totalQty > 0 ? 'selected' : ''}`}
+                              onClick={() => handleDishClick(dish)}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              <div className="preorder-dish-grid">
+                                <div className="preorder-dish-image-container">
+                                  <img
+                                    src={dish.imageUrl}
+                                    alt={dish.nameKa}
+                                    className="preorder-dish-image"
+                                  />
+                                  {dish.spicyLevel > 0 && (
+                                    <div className="preorder-spicy-badge">
+                                      {'🌶️'.repeat(dish.spicyLevel)}
+                                    </div>
+                                  )}
+                                  {totalQty > 0 && (
+                                    <div className="preorder-qty-badge">{totalQty}</div>
+                                  )}
+                                </div>
+                                <div className="preorder-dish-content">
+                                  <h4>{dish.nameKa} • {dish.nameEn}</h4>
+                                  <p className="preorder-dish-description">{dish.descriptionKa}</p>
+                                  <div className="preorder-dish-info">
+                                    <span>⏱️ {dish.preparationTimeMinutes} წუთი</span>
+                                    <span>🔥 {dish.calories} kcal</span>
+                                    <span className="preorder-dish-price">₾{dish.price}</span>
+                                  </div>
+                                  <div className="preorder-dish-actions">
+                                    <button
+                                      type="button"
+                                      className="preorder-add-btn"
+                                      onClick={(e) => { e.stopPropagation(); handleDishClick(dish); }}
+                                    >
+                                      ➕ დამატება
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           );
@@ -366,10 +432,27 @@ const ReservationPage: React.FC = () => {
                 {preOrderItems.length > 0 && (
                   <div className="preorder-cart-summary">
                     <h3>წინასწარი შეკვეთა</h3>
-                    {preOrderItems.map(p => (
-                      <div key={p.dish.id} className="preorder-cart-item">
-                        <span>{p.dish.nameKa} x{p.quantity}</span>
-                        <span>&#8382;{(p.dish.price * p.quantity).toFixed(2)}</span>
+                    {preOrderItems.map((p, index) => (
+                      <div key={`${p.dish.id}-${index}`} className="preorder-cart-item">
+                        <div className="preorder-cart-item-info">
+                          <span>{p.dish.nameKa} x{p.quantity}</span>
+                          {p.comment && <div className="preorder-cart-comment">💬 {p.comment}</div>}
+                        </div>
+                        <div className="preorder-cart-item-right">
+                          <span>&#8382;{(p.dish.price * p.quantity).toFixed(2)}</span>
+                          <div className="preorder-cart-item-actions">
+                            <button
+                              type="button"
+                              className="preorder-cart-edit-btn"
+                              onClick={() => handleEditItem(index)}
+                            >✎</button>
+                            <button
+                              type="button"
+                              className="preorder-cart-remove-btn"
+                              onClick={() => handleRemoveItem(index)}
+                            >✕</button>
+                          </div>
+                        </div>
                       </div>
                     ))}
                     <div className="preorder-cart-total">
@@ -392,7 +475,86 @@ const ReservationPage: React.FC = () => {
         </form>
       </div>
 
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet" />
+      {/* Dish Detail Modal */}
+      {selectedDish && (
+        <div className="res-modal-overlay" onClick={handleModalClose}>
+          <div className="res-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button type="button" onClick={handleModalClose} className="res-modal-close">✕</button>
+
+            <img
+              src={selectedDish.imageUrl}
+              alt={selectedDish.nameKa}
+              className="res-modal-image"
+            />
+
+            <div className="res-modal-body">
+              <h2>{selectedDish.nameKa} • {selectedDish.nameEn}</h2>
+              <p className="res-modal-description">{selectedDish.descriptionKa}</p>
+
+              <div className="res-modal-ingredients">
+                <h3>📋 ინგრედიენტები:</h3>
+                <div className="res-modal-ingredients-list">
+                  {selectedDish.ingredients.split(',').map((ing, idx) => (
+                    <span key={idx} className="res-ingredient-tag">{ing.trim()}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="res-modal-info-grid">
+                <div><strong>⏱️ მომზადების დრო:</strong> {selectedDish.preparationTimeMinutes} წუთი</div>
+                <div><strong>🔥 კალორია:</strong> {selectedDish.calories} kcal</div>
+                {selectedDish.volume && <div><strong>🍷 მოცულობა:</strong> {selectedDish.volume}</div>}
+                {selectedDish.alcoholContent === 'true' && <div><strong>🍾 ალკოჰოლი:</strong> კი</div>}
+              </div>
+
+              <div className="res-modal-comment-section">
+                <h3>💬 კომენტარი:</h3>
+                <textarea
+                  value={modalComment}
+                  onChange={(e) => setModalComment(e.target.value)}
+                  placeholder="დაწერეთ თქვენი კომენტარი..."
+                  className="res-modal-textarea"
+                />
+              </div>
+
+              <div className="res-modal-quantity-section">
+                <h3>რაოდენობა:</h3>
+                <div className="res-modal-quantity-controls">
+                  <button
+                    type="button"
+                    className="res-modal-qty-btn"
+                    onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))}
+                  >-</button>
+                  <input
+                    type="number"
+                    className="res-modal-qty-input"
+                    value={modalQuantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val >= 1) setModalQuantity(val);
+                    }}
+                    min="1"
+                  />
+                  <button
+                    type="button"
+                    className="res-modal-qty-btn"
+                    onClick={() => setModalQuantity(modalQuantity + 1)}
+                  >+</button>
+                </div>
+              </div>
+
+              <div className="res-modal-footer">
+                <span className="res-modal-price">₾{(selectedDish.price * modalQuantity).toFixed(2)}</span>
+                <button type="button" onClick={handleModalAdd} className="res-modal-add-button">
+                  {editingItemIndex !== null ? 'ცვლილების შეტანა' : `➕ დამატება (${modalQuantity})`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet" />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 .reservation-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, serif;
   color: #f5f5f5;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .reservation-body {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -168,48 +168,124 @@
   border-bottom: 1px solid rgba(193, 154, 107, 0.3);
 }
 
-.preorder-items-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+.preorder-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
 }
 
-.preorder-item-card {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 10px;
+.preorder-dish-card {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(45, 24, 16, 0.4));
+  border-radius: 15px;
   border: 1px solid rgba(212, 175, 55, 0.15);
-  padding: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.preorder-dish-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.preorder-dish-card.selected {
+  border-color: #d4af37;
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+.preorder-dish-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  min-height: 180px;
+}
+
+.preorder-dish-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.preorder-dish-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preorder-spicy-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 3px 8px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+}
+
+.preorder-dish-content {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preorder-dish-content h4 {
+  color: #d4af37;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.preorder-dish-description {
+  color: #c9b99a;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.preorder-dish-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.preorder-dish-price {
+  color: #d4af37 !important;
+  font-size: 1.2rem !important;
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.preorder-dish-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.preorder-add-btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 25px;
+  border: none;
+  background: linear-gradient(135deg, #d4af37, #c19a6b);
+  color: #1a1a1a;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.preorder-item-card:hover {
-  border-color: rgba(212, 175, 55, 0.4);
-  transform: translateY(-2px);
-}
-
-.preorder-item-card.selected {
-  border-color: #d4af37;
-  background: rgba(212, 175, 55, 0.08);
-}
-
-.preorder-item-name {
-  color: #f5f5f5;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-}
-
-.preorder-item-name-en {
-  color: #888;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-}
-
-.preorder-item-price {
-  color: #d4af37;
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+.preorder-add-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5);
 }
 
 .preorder-item-controls {
@@ -244,6 +320,305 @@
   color: #f5f5f5;
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
+}
+
+.preorder-qty-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #d4af37;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 0.9rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dish Detail Modal */
+.res-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.res-modal-content {
+  background: linear-gradient(135deg, #2d1810, #1a1a1a);
+  border-radius: 20px;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  border: 2px solid rgba(212, 175, 55, 0.4);
+  width: 100%;
+}
+
+.res-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.res-modal-close:hover {
+  background: #e74c3c;
+  transform: scale(1.1);
+}
+
+.res-modal-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 20px 20px 0 0;
+}
+
+.res-modal-body {
+  padding: 2rem;
+}
+
+.res-modal-body h2 {
+  font-size: 2.2rem;
+  color: #d4af37;
+  margin: 0 0 1rem 0;
+}
+
+.res-modal-description {
+  font-size: 1.2rem;
+  color: #c19a6b;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.res-modal-ingredients {
+  background: rgba(212, 175, 55, 0.1);
+  padding: 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.res-modal-ingredients h3 {
+  color: #d4af37;
+  margin: 0 0 0.8rem;
+  font-size: 1.1rem;
+}
+
+.res-modal-ingredients-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.res-ingredient-tag {
+  background: rgba(193, 154, 107, 0.3);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  color: #f5f5f5;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.res-modal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #c9b99a;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.res-modal-comment-section {
+  margin-bottom: 1.5rem;
+}
+
+.res-modal-comment-section h3 {
+  color: #d4af37;
+  margin: 0 0 0.8rem;
+  font-size: 1.1rem;
+}
+
+.res-modal-textarea {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  color: #f5f5f5;
+  font-size: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  resize: vertical;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+
+.res-modal-textarea:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.res-modal-quantity-section {
+  margin-bottom: 1.5rem;
+}
+
+.res-modal-quantity-section h3 {
+  color: #d4af37;
+  margin: 0 0 0.8rem;
+  font-size: 1.1rem;
+}
+
+.res-modal-quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.res-modal-qty-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.res-modal-qty-btn:hover {
+  background: rgba(212, 175, 55, 0.3);
+  border-color: #d4af37;
+}
+
+.res-modal-qty-input {
+  width: 60px;
+  text-align: center;
+  padding: 0.6rem;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  color: #d4af37;
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: Georgia, serif;
+  -moz-appearance: textfield;
+}
+
+.res-modal-qty-input::-webkit-outer-spin-button,
+.res-modal-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.res-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.res-modal-price {
+  font-size: 2.2rem;
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.res-modal-add-button {
+  background: linear-gradient(135deg, #d4af37, #c19a6b);
+  color: #1a1a1a;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.res-modal-add-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 25px rgba(212, 175, 55, 0.5);
+}
+
+.preorder-cart-comment {
+  font-size: 0.85rem;
+  color: #c19a6b;
+  margin-top: 0.2rem;
+}
+
+.preorder-cart-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.preorder-cart-item-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-shrink: 0;
+}
+
+.preorder-cart-item-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.preorder-cart-edit-btn,
+.preorder-cart-remove-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.preorder-cart-edit-btn {
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
+}
+
+.preorder-cart-edit-btn:hover {
+  background: rgba(212, 175, 55, 0.4);
+}
+
+.preorder-cart-remove-btn {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
+.preorder-cart-remove-btn:hover {
+  background: rgba(231, 76, 60, 0.4);
 }
 
 /* Cart Summary */
@@ -293,7 +668,7 @@
   border: none;
   background: linear-gradient(135deg, #d4af37, #c19a6b);
   color: #1a1a1a;
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, serif;
   font-size: 1.3rem;
   font-weight: 700;
   cursor: pointer;
@@ -424,12 +799,119 @@
     grid-template-columns: 1fr;
   }
 
-  .preorder-items-grid {
+  .preorder-dish-grid {
     grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .preorder-dish-image-container {
+    height: 180px;
+  }
+
+  .preorder-dish-content h4 {
+    font-size: 1.1rem;
+  }
+
+  .preorder-dish-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .preorder-dish-price {
+    margin-left: 0 !important;
+  }
+
+  .preorder-dish-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .preorder-item-controls {
+    justify-content: center;
+  }
+
+  .preorder-add-btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.7rem;
+  }
+
+  .preorder-cart-summary {
+    padding: 1rem;
   }
 
   .reservation-form-section,
   .preorder-section {
     padding: 1.2rem;
+  }
+
+  .reservation-submit-btn {
+    font-size: 1.1rem;
+  }
+
+  .res-modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .res-modal-content {
+    max-height: 100vh;
+    border-radius: 15px;
+  }
+
+  .res-modal-image {
+    height: 220px;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .res-modal-body {
+    padding: 1.2rem;
+  }
+
+  .res-modal-body h2 {
+    font-size: 1.5rem;
+  }
+
+  .res-modal-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .res-modal-footer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .res-modal-price {
+    font-size: 1.8rem;
+  }
+
+  .res-modal-add-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .reservation-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .preorder-dish-image-container {
+    height: 150px;
+  }
+
+  .preorder-dish-content {
+    padding: 1rem;
+  }
+
+  .preorder-category-title {
+    font-size: 1.1rem;
+  }
+
+  .reservation-form-section,
+  .preorder-section {
+    padding: 0.8rem;
+    border-radius: 10px;
   }
 }

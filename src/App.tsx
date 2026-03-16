@@ -16,6 +16,7 @@ import TableSessionManagement from './components/orders/TableSessionManagement';
 import WaiterTableView from './components/orders/WaiterTableView';
 import ReservationPage from './components/reservation/ReservationPage';
 import ReservationManagement from './components/reservation/ReservationManagement';
+import Header from './components/Header';
 import './App.css';
 
 const App: React.FC = () => {
@@ -23,6 +24,7 @@ const App: React.FC = () => {
     <BrowserRouter>
       <Provider store={store}>
         <ConfigProvider locale={kaGE}>
+          <Header />
           <Routes>
             {/* საჯარო გვერდები */}
             <Route path="/" element={<RestaurantMenu />} />

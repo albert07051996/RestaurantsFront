@@ -44,9 +44,6 @@ const RestaurantMenu: React.FC = () => {
   const qrTable = useMemo(() => {
     const t = searchParams.get('table');
     if (t && /^\d+$/.test(t) && parseInt(t) >= 1) return parseInt(t);
-    // Also check localStorage for previously scanned table
-    const stored = localStorage.getItem('tableSessionTable');
-    if (stored && /^\d+$/.test(stored)) return parseInt(stored);
     return null;
   }, [searchParams]);
 
@@ -63,6 +60,7 @@ const RestaurantMenu: React.FC = () => {
   const [modalQuantity, setModalQuantity] = useState(1);
   const [activeSession, setActiveSession] = useState<TableSessionResponse | null>(null);
   const [showSessionOrders, setShowSessionOrders] = useState(!!qrTable);
+  const [showMobileCart, setShowMobileCart] = useState(false);
 
   // Handle table change from URL — clear old session if table changed
   useEffect(() => {
@@ -713,6 +711,99 @@ const RestaurantMenu: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Floating Cart Button (mobile) */}
+      <button
+        className="floating-cart-btn"
+        onClick={() => setShowMobileCart(true)}
+      >
+        🛒
+        {cart.length > 0 && (
+          <span className="floating-cart-badge">
+            {cart.reduce((sum, item) => sum + item.quantity, 0)}
+          </span>
+        )}
+      </button>
+
+      {/* Mobile Cart Overlay */}
+      <div
+        className={`mobile-cart-overlay ${showMobileCart ? 'open' : ''}`}
+        onClick={() => setShowMobileCart(false)}
+      >
+        <div className="mobile-cart-panel" onClick={(e) => e.stopPropagation()}>
+          <div className="mobile-cart-header">
+            <h3>🛒 თქვენი შეკვეთა</h3>
+            <button className="mobile-cart-close" onClick={() => setShowMobileCart(false)}>✕</button>
+          </div>
+
+          {cart.length === 0 ? (
+            <p className="empty-cart">შეკვეთა ცარიელია</p>
+          ) : (
+            <>
+              <div>
+                {cart.map((item, index) => (
+                  <div
+                    key={`${item.id}-${item.cartComment}-${index}`}
+                    className="cart-item"
+                    onClick={() => { handleDishClick(item); setShowMobileCart(false); }}
+                  >
+                    <div className="cart-item-header">
+                      <h4>{item.nameEn}</h4>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeFromCart(item.id, item.cartComment);
+                        }}
+                        className="remove-button"
+                      >✕</button>
+                    </div>
+
+                    {item.cartComment && (
+                      <p style={{ fontSize: '0.9rem', color: '#c19a6b', margin: '0.5rem 0' }}>
+                        💬 {item.cartComment}
+                      </p>
+                    )}
+
+                    <div className="quantity-controls">
+                      <div className="quantity-buttons">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(item.id, item.cartComment, item.quantity - 1);
+                          }}
+                          className="quantity-button"
+                        >-</button>
+                        <span className="quantity-display">{item.quantity}</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(item.id, item.cartComment, item.quantity + 1);
+                          }}
+                          className="quantity-button"
+                        >+</button>
+                      </div>
+                      <span className="cart-item-price">₾{item.price * item.quantity}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="cart-total">
+                <div className="total-row">
+                  <span>სულ:</span>
+                  <span>₾{getTotalPrice().toFixed(2)}</span>
+                </div>
+                <button
+                  className="checkout-button"
+                  onClick={() => { setShowMobileCart(false); setShowCheckout(true); }}
+                >
+                  🍽️ შეკვეთა
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Checkout Modal */}
       <CheckoutModal

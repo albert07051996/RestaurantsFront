@@ -11,7 +11,7 @@
 }
 
 .waiter-tables-header h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, serif;
   color: #d4af37;
   font-size: 2rem;
   margin: 0 0 8px 0;
@@ -72,7 +72,7 @@
 }
 
 .table-number {
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, serif;
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 8px;
@@ -162,7 +162,7 @@
 }
 
 .table-modal-header h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, serif;
   color: #d4af37;
   margin: 0;
   font-size: 1.5rem;
@@ -224,7 +224,7 @@
 .order-card-header h4 {
   color: #e8d5b5;
   margin: 0;
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, serif;
 }
 
 .order-status-badge {
@@ -277,7 +277,7 @@
   color: #1a0f0a;
   border: none;
   border-radius: 12px;
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, serif;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
